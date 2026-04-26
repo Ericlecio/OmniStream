@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OmniStream | Ericlecio Morais</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #000000;
+        --card-bg: #08080a;
+        --accent-green: #00ff88;
+        --accent-red: #ff3344;
+        --accent-blue: #0077ff;
+        --text-dim: #94a3b8;
+        --text-bright: #ffffff;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        background-image:
+          radial-gradient(
+            circle at top left,
+            rgba(0, 119, 255, 0.1) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(0, 255, 136, 0.05) 0%,
+            transparent 40%
+          );
+        color: var(--text-bright);
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .container {
+        flex: 1;
+        padding: 3rem 0;
+      }
+
+      h1 {
+        font-family: "Orbitron", sans-serif;
+        letter-spacing: 4px;
+        color: var(--accent-green);
+        text-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+        font-weight: 700;
+      }
+
+      .glass-card {
+        background: var(--card-bg);
+        border: 1px solid #1a1a1c;
+        border-radius: 1.2rem;
+        padding: 1.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-content {
+        background-color: #0a0a0c;
+        border: 1px solid var(--accent-blue);
+        color: white;
+      }
+      .form-control {
+        background-color: #121214;
+        border: 1px solid #333;
+        color: white;
+      }
+      .form-control:focus {
+        background-color: #121214;
+        color: white;
+        border-color: var(--accent-green);
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+      }
+
+      .kpi-value {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.5rem;
+      }
+
+      footer {
+        background: #050505;
+        border-top: 1px solid #1a1a1c;
+        padding: 2rem 0;
+        margin-top: 4rem;
+      }
+
+      .footer-link {
+        color: var(--text-dim);
+        text-decoration: none;
+        transition: all 0.3s;
+        margin: 0 15px;
+        font-size: 0.9rem;
+      }
+
+      .footer-link:hover {
+        color: var(--accent-green);
+      }
+
+      #status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        background: var(--accent-green);
+        margin-right: 12px;
+        animation: pulse 1.2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.4);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-start mb-5">
+        <div>
+          <h1>OMNISTREAM_ENGINE</h1>
+          <p
+            style="
+              color: var(--accent-green);
+              font-size: 0.75rem;
+              font-weight: 800;
+              letter-spacing: 2px;
+            "
+          >
+            <span id="status-indicator"></span> LIVE_TELEMETRY | PORTAL_ATIVO
+          </p>
+        </div>
+        <button
+          class="btn btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#ingestModal"
+        >
+          <i class="bi bi-plus-circle me-2"></i> NOVO EVENTO
+        </button>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <div class="col-md-4">
+          <div class="glass-card text-center">
+            <span class="small text-muted">MENSAGENS</span>
+            <span class="kpi-value d-block" id="total-readings">0</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="glass-card text-center">
+            <span class="small text-muted">MÉDIA TÉRMICA</span>
+            <span class="kpi-value d-block text-primary" id="avg-temp"
+              >0°C</span
+            >
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="glass-card text-center">
+            <span class="small text-muted">ANOMALIAS</span>
+            <span class="kpi-value d-block text-danger" id="total-alerts"
+              >0</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <canvas id="sensorChart" style="height: 350px"></canvas>
+      </div>
+    </div>
+
+    <footer class="text-center">
+      <div class="container-fluid">
+        <p
+          class="mb-3"
+          style="color: var(--text-dim); font-weight: 600; letter-spacing: 1px"
+        >
+          DESENVOLVIDO POR
+          <span style="color: var(--accent-green)">ERICLECIO MORAIS</span>
+        </p>
+        <div class="d-flex justify-content-center">
+          <a
+            href="https://github.com/Ericlecio"
+            target="_blank"
+            class="footer-link"
+          >
+            <i class="bi bi-github me-1"></i> GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/feed/"
+            target="_blank"
+            class="footer-link"
+          >
+            <i class="bi bi-linkedin me-1"></i> LinkedIn
+          </a>
+        </div>
+        <p class="mt-3 small" style="color: #333">
+          &copy; 2026 Cloud-Native Data Pipeline Project
+        </p>
+      </div>
+    </footer>
+
+    <div class="modal fade" id="ingestModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title font-monospace">INJETAR_DADO_PIPELINE</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="ingestForm">
+              <div class="mb-3">
+                <label class="form-label small text-muted"
+                  >ID DO DISPOSITIVO</label
+                >
+                <input
+                  type="text"
+                  id="devId"
+                  class="form-control"
+                  placeholder="ex: sensor-web-01"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted"
+                  >VALOR DA LEITURA</label
+                >
+                <input
+                  type="number"
+                  step="0.1"
+                  id="temp"
+                  class="form-control"
+                  placeholder="ex: 25.5"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mt-2">
+                EXECUTAR INGESTÃO
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let myChart;
+
+      document
+        .getElementById("ingestForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const data = {
+            device_id: document.getElementById("devId").value,
+            temperature: parseFloat(document.getElementById("temp").value),
+            metadata: { source: "web-dashboard" },
+          };
+
+          try {
+            const response = await fetch("/ingest", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+              bootstrap.Modal.getInstance(
+                document.getElementById("ingestModal"),
+              ).hide();
+              document.getElementById("ingestForm").reset();
+              updateData();
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+
+      async function updateData() {
+        try {
+          const res = await fetch("/data");
+          const data = await res.json();
+
+          document.getElementById("total-readings").innerText = data.length;
+          const temps = data.map((d) => parseFloat(d.temperature));
+          const avg = temps.length
+            ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1)
+            : 0;
+          document.getElementById("avg-temp").innerText = avg + "°C";
+          const alerts = temps.filter((t) => t > 30).length;
+          document.getElementById("total-alerts").innerText = alerts;
+
+          const labels = data.map((d) => d.device_id.toUpperCase());
+
+          if (myChart) {
+            myChart.data.labels = labels;
+            myChart.data.datasets[0].data = temps;
+            myChart.data.datasets[0].backgroundColor = temps.map((t) =>
+              t > 30 ? "#ff3344" : "#00ff88",
+            );
+            myChart.update();
+          } else {
+            const ctx = document.getElementById("sensorChart").getContext("2d");
+            myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    data: temps,
+                    backgroundColor: temps.map((t) =>
+                      t > 30 ? "#ff3344" : "#00ff88",
+                    ),
+                    borderRadius: 5,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: {
+                    grid: { color: "#1a1a1c" },
+                    ticks: { color: "#475569" },
+                  },
+                  x: {
+                    grid: { display: false },
+                    ticks: { color: "#475569", font: { size: 9 } },
+                  },
+                },
+              },
+            });
+          }
+        } catch (e) {}
+      }
+
+      setInterval(updateData, 5000);
+      updateData();
+    </script>
+  </body>
+</html>
