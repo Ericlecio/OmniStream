@@ -8,6 +8,17 @@ This project demonstrates how to build a resilient system that decouples ingesti
 
 ---
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Ericlecio/OmniStream/main/assets/1.png" width="100%">
+</div>
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Ericlecio/OmniStream/main/assets/2.png" width="48%">
+  <img src="https://raw.githubusercontent.com/Ericlecio/OmniStream/main/assets/3.png" width="48%">
+</div>
+
+---
+
 ## Tech Stack
 
 - **Language:** Python 3.9+
@@ -88,22 +99,11 @@ pydantic
 
 ---
 
----
-
 ## Versao em Portugues
 
 O **OmniStream Engine** e um pipeline de ingestao e processamento de dados em tempo real baseado em eventos. Ele foi projetado para lidar com fluxos de dados assincronos como telemetria IoT ou logs de aplicativos usando uma abordagem moderna e focada em Serverless.
 
 Este projeto demonstra como construir um sistema resiliente que separa a ingestao do processamento, garantindo a integridade dos dados e a escalabilidade, ao mesmo tempo em que minimiza os custos de infraestrutura.
-
----
-
-## Arquitetura e Padroes
-
-- **Arquitetura Orientada a Eventos (EDA):** O sistema reage a chegada de dados, disparando recursos de computacao apenas quando necessario.
-- **Padrao Produtor-Consumidor:** FastAPI atua como o produtor (ingerindo dados), enquanto o AWS Lambda atua como o consumidor (processando dados).
-- **Desacoplamento:** O uso do SQS garante que picos de trafego nao sobrecarreguem o banco de dados ou a camada de processamento.
-- **Infraestrutura como Codigo (IaC):** Todo o ambiente cloud e versionado e automatizado via Terraform.
 
 ---
 
@@ -116,6 +116,7 @@ Este projeto demonstra como construir um sistema resiliente que separa a ingesta
   <img src="https://raw.githubusercontent.com/Ericlecio/OmniStream/main/assets/3.png" width="48%">
 </div>
 
+---
 
 ## Tecnologias Utilizadas
 
@@ -123,6 +124,15 @@ Este projeto demonstra como construir um sistema resiliente que separa a ingesta
 - **AWS SQS, Lambda & DynamoDB:** O "coracao" do pipeline de dados rodando de forma serverless.
 - **LocalStack:** Simulacao de ambiente AWS local para desenvolvimento e testes.
 - **Chart.js:** Visualizacao de dados em tempo real no dashboard.
+
+---
+
+## Arquitetura e Padroes
+
+- **Arquitetura Orientada a Eventos (EDA):** O sistema reage a chegada de dados, disparando recursos de computacao apenas quando necessario.
+- **Padrao Produtor-Consumidor:** FastAPI atua como o produtor (ingerindo dados), enquanto o AWS Lambda atua como o consumidor (processando dados).
+- **Desacoplamento:** O uso do SQS garante que picos de trafego nao sobrecarreguem o banco de dados ou a camada de processamento.
+- **Infraestrutura como Codigo (IaC):** Todo o ambiente cloud e versionado e automatizado via Terraform.
 
 ---
 
